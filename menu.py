@@ -1,5 +1,6 @@
+'''This module is interface for working with class Notebook'''
 import sys
-from notebook import Notebook, Note
+from notebook import Notebook
 
 class Menu:
     '''Display a menu and respond to choices when run.'''
@@ -15,9 +16,9 @@ class Menu:
         }
 
     def display_menu(self):
+        '''Show menu with variants of function'''
         print("""
 Notebook Menu
-
 1. Show all Notes
 2. Search Notes
 3. Add Note
@@ -26,7 +27,7 @@ Notebook Menu
 """)
 
     def run(self):
-        '''Display thhe menu and respond to choices.'''
+        '''Display the menu and respond to choices.'''
         while True:
             self.display_menu()
             choice = input("Enter an option: ")
@@ -37,32 +38,39 @@ Notebook Menu
                 print("{0} is not a valid choice".format(choice))
 
     def show_notes(self, notes=None):
+        '''Show all notes (id, tags, date, text)'''
         if not notes:
             notes = self.notebook.notes
         for note in notes:
-            print("{0}: {1}\n{2}".format(
-            note.id, note.tags, note.memo))
+            print(f"\n{note.note_id}: {note.tags}\n{note.creation_date}\n{note.memo}")
 
     def search_notes(self):
-        filter = input("Search for: ")
-        notes = self.notebook.search(filter)
+        '''Show notes that contain inputed text'''
+        searched_text = input("Search for: ")
+        notes = self.notebook.search(searched_text)
         self.show_notes(notes)
 
     def add_note(self):
+        '''Create new note'''
         memo = input("Enter a memo: ")
-        self.notebook.new_note(memo)
+        tags = input("Enter tags: ")
+        self.notebook.new_note(memo, tags)
         print("Your note has been added.")
 
     def modify_note(self):
-        id = input("Enter a note id: ")
+        '''Modify existing note'''
+        note_id = input("Enter a note id: ")
         memo = input("Enter a memo: ")
         tags = input("Enter tags: ")
         if memo:
-            self.notebook.modify_memo(id, memo)
+            if not self.notebook.modify_memo(note_id, memo):
+                return
         if tags:
-            self.notebook.modify_tags(id, tags)
+            self.notebook.modify_tags(note_id, tags)
+
 
     def quit(self):
+        '''Ends the program'''
         print("Thank you for using your notebook today.")
         sys.exit(0)
 
